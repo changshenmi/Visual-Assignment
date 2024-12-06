@@ -1,23 +1,38 @@
-# Deep playground
+# 可视化仪表板项目  
 
-Deep playground is an interactive visualization of neural networks, written in
-TypeScript using d3.js. We use GitHub issues for tracking new requests and bugs.
-Your feedback is highly appreciated!
+一个交互式可视化仪表板，支持交互与决策边界实时展示。  
 
-**If you'd like to contribute, be sure to review the [contribution guidelines](CONTRIBUTING.md).**
+---
 
-## Development
+## 开发环境
 
-To run the visualization locally, run:
-- `npm i` to install dependencies
-- `npm run build` to compile the app and place it in the `dist/` directory
-- `npm run serve` to serve from the `dist/` directory and open a page on your browser.
+推荐 node 版本 12.22.12
+查看 node 版本
 
-For a fast edit-refresh cycle when developing run `npm run serve-watch`.
-This will start an http server and automatically re-compile the TypeScript,
-HTML and CSS files whenever they change.
+```shell
+node -v
+```
 
-## For owners
-To push to production: `git subtree push --prefix dist origin gh-pages`.
+## 开发流程
 
-This is not an official Google product.
+安装依赖
+
+```shell
+npm install
+```
+
+## 打包发布
+编译应用程序并将其置于 dist/ 目录：
+
+```shell
+npm run build
+```
+发布打包生成后的 dist/index.html
+
+## 启动服务
+
+```shell
+npm run serve-watch #快速的编辑-刷新开发循环
+# 或
+npm run serve
+```
