@@ -16,7 +16,7 @@ limitations under the License.
 import * as d3 from 'd3';
 
 /**
- * A two dimensional example: x and y coordinates with the label.
+ * Example2D 类型表示一个二维的例子，包含 x 和 y 坐标以及标签。
  */
 export type Example2D = {
   x: number,
@@ -224,16 +224,15 @@ export function classifyXORData(numSamples: number, noise: number):
 }
 
 /**
- * Returns a sample from a uniform [a, b] distribution.
- * Uses the seedrandom library as the random generator.
+ * 返回一个均匀分布的随机数
+ * 使用seedrandom库作为随机数生成器
  */
 function randUniform(a: number, b: number) {
   return Math.random() * (b - a) + a;
 }
 
 /**
- * Samples from a normal distribution. Uses the seedrandom library as the
- * random generator.
+ * 从正态分布中采样。使用seedrandom库作为随机数生成器
  *
  * @param mean The mean. Default is 0.
  * @param variance The variance. Default is 1.
@@ -250,7 +249,7 @@ function normalRandom(mean = 0, variance = 1): number {
   return mean + Math.sqrt(variance) * result;
 }
 
-/** Returns the eucledian distance between two points in space. */
+/** 返回两个点之间的欧几里得距离 */ 
 function dist(a: Point, b: Point): number {
   let dx = a.x - b.x;
   let dy = a.y - b.y;

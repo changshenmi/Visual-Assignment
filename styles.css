@@ -399,12 +399,12 @@ header h1 .optional {
   -webkit-justify-content: space-between;
   justify-content: space-between;
   margin-top: 30px;
-  margin-bottom: 50px;
-  padding-top: 2px;
+  margin-bottom: 80px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   position: relative;
   margin-left: 240px;
   margin-top: 80px;
-  padding-top: 20px;
 }
 
 @media (min-height: 700px) {
@@ -909,12 +909,16 @@ article p {
 /* Footer */
 
 footer {
-  border-top: solid 1px #eee;
-  color: #666;
-  font-weight: 300;
-  padding: 40px 0;
-  height: 30px;
-  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin-top: 0;
+  padding: 8px 0;
+  background: white;
+  border-top: 1px solid #eee;
+  z-index: 100;
+  height: 24px;
 }
 
 footer svg {
@@ -926,12 +930,13 @@ footer svg {
 }
 
 footer .links {
-  font-size: 16px;
-  height: 30px;
-  line-height: 30px;
+  font-size: 14px;
+  height: 24px;
+  line-height: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 footer .links a {
@@ -948,7 +953,7 @@ footer .links a:hover {
   color: #333;
   font-weight: 500;
   letter-spacing: 0.5px;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .team-credit strong {
@@ -1096,4 +1101,100 @@ footer .links a:hover {
 /* 复选框选中状态 */
 .output .checkbox-container .mdl-checkbox.is-checked .mdl-checkbox__label {
   color: #183D4E;
+}
+
+/* 添加新的样式 */
+.ui-activation {
+  position: relative;
+}
+
+.ui-activation .activation-plot {
+  width: 200px;
+  height: 200px;
+  margin-top: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  display: block !important; /* 强制显示 */
+}
+
+.ui-activation .activation-plot canvas {
+  width: 100%;
+  height: 100%;
+  display: block !important; /* 强制显示 */
+}
+
+/* 删除或注释掉这些可能导致冲突的样式 */
+/*
+#activation-plots {
+  display: none;
+}
+
+#activation-canvas {
+  display: none;
+}
+
+.activation-container {
+  ...
+}
+
+.activation-gallery {
+  ...
+}
+
+.activation-plot {
+  ...
+}
+*/
+
+/* 修改激活函数可视化的样式 */
+.ui-activation-vis {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  margin-bottom: 40px;
+  width: 200px;
+  float: left;
+  clear: none;
+}
+
+.ui-activation-vis label {
+  display: block;
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: 500;  /* 加粗标签文字 */
+}
+
+.ui-activation-vis .activation-plot {
+  width: 200px;
+  height: 200px;
+  background: white;
+  border: 2px solid #333;  /* 加粗边框并加深颜色 */
+  border-radius: 4px;
+  overflow: hidden;
+  display: block !important;
+  margin: 0 auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);  /* 添加阴影效果 */
+}
+
+.ui-activation-vis .activation-plot canvas {
+  width: 100%;
+  height: 100%;
+  display: block !important;
+  background: #fff;  /* 确保背景为白色 */
+}
+
+/* 添加悬停效果 */
+.ui-activation-vis .activation-plot:hover {
+  border-color: #183D4E;  /* 悬停时改变边框颜色 */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);  /* 增强阴影 */
+}
+
+/* 清除浮动 */
+.controls-container::after {
+  content: "";
+  display: table;
+  clear: both;
 }

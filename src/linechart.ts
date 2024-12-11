@@ -37,9 +37,9 @@ export class AppendingLineChart {
   private maxY = Number.MIN_VALUE;
 
   constructor(container, lineColors: string[]) {
-    this.lineColors = lineColors;
-    this.numLines = lineColors.length;
-    let node = container.node() as HTMLElement;
+    this.lineColors = lineColors;//线条颜色
+    this.numLines = lineColors.length;//线条数量
+    let node = container.node() as HTMLElement;//获取容器节点
     let totalWidth = node.offsetWidth;
     let totalHeight = node.offsetHeight;
     let margin = {top: 2, right: 0, bottom: 2, left: 2};
@@ -48,33 +48,34 @@ export class AppendingLineChart {
 
     this.xScale = d3.scale.linear()
       .domain([0, 0])
-      .range([0, width]);
+      .range([0, width]);//x轴的缩放比例
 
     this.yScale = d3.scale.linear()
       .domain([0, 0])
-      .range([height, 0]);
+      .range([height, 0]);//y轴的缩放比例
 
     this.svg = container.append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
+    //将svg的坐标系移动到margin.left,margin.top
 
-    this.paths = new Array(this.numLines);
+    this.paths = new Array(this.numLines);//创建线条数组
     for (let i = 0; i < this.numLines; i++) {
       this.paths[i] = this.svg.append("path")
-        .attr("class", "line")
+        .attr("class", "line")//线条类
         .style({
           "fill": "none",
-          "stroke": lineColors[i],
-          "stroke-width": "1.5px"
+          "stroke": lineColors[i],//线条颜色
+          "stroke-width": "1.5px"//线条宽度
         });
     }
   }
 
   reset() {
     this.data = [];
-    this.redraw();
+    this.redraw();//重绘
     this.minY = Number.MAX_VALUE;
     this.maxY = Number.MIN_VALUE;
   }
@@ -82,14 +83,14 @@ export class AppendingLineChart {
   addDataPoint(dataPoint: number[]) {
     if (dataPoint.length !== this.numLines) {
       throw Error("Length of dataPoint must equal number of lines");
-    }
+    }//如果dataPoint的行数不等于线条数量，则抛出错误
     dataPoint.forEach(y => {
-      this.minY = Math.min(this.minY, y);
-      this.maxY = Math.max(this.maxY, y);
+      this.minY = Math.min(this.minY, y);//更新最小值
+      this.maxY = Math.max(this.maxY, y);//更新最大值
     });
 
-    this.data.push({x: this.data.length + 1, y: dataPoint});
-    this.redraw();
+    this.data.push({x: this.data.length + 1, y: dataPoint});//添加数据点
+    this.redraw();//重绘
   }
 
   private redraw() {

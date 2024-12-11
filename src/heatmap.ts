@@ -22,13 +22,12 @@ export interface HeatMapSettings {
   noSvg?: boolean; //是否不使用svg
 }
 
-/**  Number of different shades (colors) when drawing a gradient heatmap */
+/**    画热力图时，颜色数量 */   
 const NUM_SHADES = 30;
 
 /**
- * Draws a heatmap using canvas. Used for showing the learned decision
- * boundary of the classification algorithm. Can also draw data points
- * using an svg overlayed on top of the canvas heatmap.
+ * 使用canvas绘制热力图。用于显示分类算法的学习决策边界。
+ * 同时使用svg在画布热力图上绘制数据点。
  */
 export class HeatMap {
   private settings: HeatMapSettings = {
@@ -205,7 +204,7 @@ export class HeatMap {
     // Remove points if the length has gone down.
     selection.exit().remove();
   }
-}  // Close class HeatMap.
+}     
 
 export function reduceMatrix(matrix: number[][], factor: number): number[][] {
   if (matrix.length !== matrix[0].length) {

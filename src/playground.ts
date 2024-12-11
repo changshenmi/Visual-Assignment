@@ -28,6 +28,7 @@ import {
 import {Example2D, shuffle} from "./dataset";
 import {AppendingLineChart} from "./linechart";
 import * as d3 from 'd3';
+import {Activations} from "./nn";
 
 let mainWidth;
 
@@ -174,6 +175,53 @@ let lossTest = 0;
 let player = new Player();
 let lineChart = new AppendingLineChart(d3.select("#linechart"),
     ["#777", "black"]);
+
+function drawActivationFunction(type: string) {
+  const canvas = document.getElementById("activation-vis-canvas") as HTMLCanvasElement;
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+  
+  // 清空画布
+  ctx.clearRect(0, 0, width, height);
+  
+  // 绘制坐标轴
+  ctx.beginPath();
+  ctx.strokeStyle = "#ddd";
+  ctx.lineWidth = 1;
+  ctx.moveTo(width/2, 0);
+  ctx.lineTo(width/2, height);
+  ctx.moveTo(0, height/2);
+  ctx.lineTo(width, height/2);
+  ctx.stroke();
+  
+  // 设置比例尺
+  const xScale = 4;
+  const yScale = 2;
+  
+  // 获取激活函数
+  const activation = activations[type];
+  
+  // 绘制激活函数曲线
+  ctx.beginPath();
+  ctx.strokeStyle = "#0877bd";
+  ctx.lineWidth = 2;
+  
+  for(let i = 0; i < width; i++) {
+    const x = (i - width/2) * xScale / (width/2);
+    const y = activation.output(x);
+    const canvasY = height/2 - y * height/2/yScale;
+    
+    if(i === 0) {
+      ctx.moveTo(i, canvasY);
+    } else {
+      ctx.lineTo(i, canvasY);
+    }
+  }
+  ctx.stroke();
+}
 
 function makeGUI() {
   d3.select("#reset-button").on("click", () => {
@@ -324,6 +372,7 @@ function makeGUI() {
   let activationDropdown = d3.select("#activations").on("change", function() {
     state.activation = activations[this.value];
     parametersChanged = true;
+    drawActivationFunction(this.value);  // 只绘制选中的激活函数
     reset();
   });
   activationDropdown.property("value",
@@ -948,7 +997,8 @@ function reset(onStartup=false) {
   lossTest = getLoss(network, testData);
   drawNetwork(network);
   updateUI(true);
-};
+  drawActivationFunction(getKeyFromValue(activations, state.activation));
+}
 
 function initTutorial() {
   if (state.tutorial == null || state.tutorial === '' || state.hideText) {
