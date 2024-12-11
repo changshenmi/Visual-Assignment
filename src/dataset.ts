@@ -30,20 +30,20 @@ type Point = {
 };
 
 /**
- * Shuffles the array using Fisher-Yates algorithm. Uses the seedrandom
- * library as the random generator.
+ * 使用 Fisher-Yates 算法对数组进行洗牌。
+ * 使用 seedrandom 库作为随机数生成器
  */
 export function shuffle(array: any[]): void {
   let counter = array.length;
   let temp = 0;
   let index = 0;
-  // While there are elements in the array
+  // 当数组中有数据时
   while (counter > 0) {
-    // Pick a random index
+    // 随机选择一个索引
     index = Math.floor(Math.random() * counter);
-    // Decrease counter by 1
+    // 交换的过程是从最后一个数据到第一个数据，减1向前一个位置
     counter--;
-    // And swap the last element with it
+    // 交换当前元素和选中的元素
     temp = array[counter];
     array[counter] = array[index];
     array[index] = temp;
@@ -52,12 +52,18 @@ export function shuffle(array: any[]): void {
 
 export type DataGenerator = (numSamples: number, noise: number) => Example2D[];
 
+/**
+ * 生成两个正态分布的样本
+ * @param numSamples ：样本数量
+ * @param noise ：噪声
+ * @returns ：Example2D类型的数组
+ */
 export function classifyTwoGaussData(numSamples: number, noise: number):
     Example2D[] {
-  let points: Example2D[] = [];
+  let points: Example2D[] = [];//points是Example2D类型的数组
 
-  let varianceScale = d3.scale.linear().domain([0, .5]).range([0.5, 4]);
-  let variance = varianceScale(noise);
+  let varianceScale = d3.scale.linear().domain([0, .5]).range([0.5, 4]); //将0到0.5的输入等比例映射到0.5到4的输出
+  let variance = varianceScale(noise); //将noise映射到0.5到4的输出  
 
   function genGauss(cx: number, cy: number, label: number) {
     for (let i = 0; i < numSamples / 2; i++) {
@@ -67,31 +73,43 @@ export function classifyTwoGaussData(numSamples: number, noise: number):
     }
   }
 
-  genGauss(2, 2, 1); // Gaussian with positive examples.
-  genGauss(-2, -2, -1); // Gaussian with negative examples.
+  genGauss(2, 2, 1); // 正态分布正样本
+  genGauss(-2, -2, -1); // 正态分布负样本
   return points;
 }
 
+/**
+ * 生成平面样本
+ * @param numSamples ：样本数量
+ * @param noise ：噪声
+ * @returns ：Example2D类型的数组
+ */ 
 export function regressPlane(numSamples: number, noise: number):
   Example2D[] {
   let radius = 6;
   let labelScale = d3.scale.linear()
     .domain([-10, 10])
-    .range([-1, 1]);
-  let getLabel = (x, y) => labelScale(x + y);
+    .range([-1, 1]);//将-10到10的输入等比例映射到-1到1的输出
+  let getLabel = (x, y) => labelScale(x + y);//将x+y映射到-1到1的输出
 
   let points: Example2D[] = [];
   for (let i = 0; i < numSamples; i++) {
-    let x = randUniform(-radius, radius);
-    let y = randUniform(-radius, radius);
-    let noiseX = randUniform(-radius, radius) * noise;
+    let x = randUniform(-radius, radius);//x 在-6到6之间 
+    let y = randUniform(-radius, radius);//y 在-6到6之间
+    let noiseX = randUniform(-radius, radius) * noise;//乘以noise
     let noiseY = randUniform(-radius, radius) * noise;
-    let label = getLabel(x + noiseX, y + noiseY);
-    points.push({x, y, label});
+    let label = getLabel(x + noiseX, y + noiseY);//将x+noiseX和y+noiseY映射到-1到1的输出
+    points.push({x, y, label});//将x,y,label添加到points数组中
   }
   return points;
 }
 
+/**
+ * 生成高斯样本
+ * @param numSamples ：样本数量
+ * @param noise ：噪声
+ * @returns ：Example2D类型的数组
+ */ 
 export function regressGaussian(numSamples: number, noise: number):
   Example2D[] {
   let points: Example2D[] = [];
@@ -159,8 +177,7 @@ export function classifyCircleData(numSamples: number, noise: number):
   let radius = 5;
   function getCircleLabel(p: Point, center: Point) {
     return (dist(p, center) < (radius * 0.5)) ? 1 : -1;
-  }
-
+  }//如果p到center的距离小于radius的一半，则label为1，否则为-1
   // Generate positive points inside the circle.
   for (let i = 0; i < numSamples / 2; i++) {
     let r = randUniform(0, radius * 0.5);
@@ -175,7 +192,7 @@ export function classifyCircleData(numSamples: number, noise: number):
 
   // Generate negative points outside the circle.
   for (let i = 0; i < numSamples / 2; i++) {
-    let r = randUniform(radius * 0.7, radius);
+    let r = randUniform(radius * 0.7, radius); //并不是靠近radius * 0.5，而是从radius * 0.7开始
     let angle = randUniform(0, 2 * Math.PI);
     let x = r * Math.sin(angle);
     let y = r * Math.cos(angle);

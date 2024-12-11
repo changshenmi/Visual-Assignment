@@ -18,11 +18,11 @@ import * as d3 from 'd3';
 
 export interface HeatMapSettings {
   [key: string]: any;
-  showAxes?: boolean;
-  noSvg?: boolean;
+  showAxes?: boolean; //是否显示坐标轴
+  noSvg?: boolean; //是否不使用svg
 }
 
-/** Number of different shades (colors) when drawing a gradient heatmap */
+/**  Number of different shades (colors) when drawing a gradient heatmap */
 const NUM_SHADES = 30;
 
 /**
@@ -32,8 +32,8 @@ const NUM_SHADES = 30;
  */
 export class HeatMap {
   private settings: HeatMapSettings = {
-    showAxes: false,
-    noSvg: false
+    showAxes: false,//是否显示坐标轴
+    noSvg: false//是否有svg
   };
   private xScale;
   private yScale;
@@ -48,10 +48,10 @@ export class HeatMap {
       userSettings?: HeatMapSettings) {
     this.numSamples = numSamples;
     let height = width;
-    let padding = userSettings.showAxes ? 20 : 0;
+    let padding = userSettings.showAxes ? 20 : 0;//如果设置坐标轴就留出内边距
 
     if (userSettings != null) {
-      // overwrite the defaults with the user-specified settings.
+      // 用户设置覆盖默认设置
       for (let prop in userSettings) {
         this.settings[prop] = userSettings[prop];
       }
@@ -64,7 +64,7 @@ export class HeatMap {
     this.yScale = d3.scale.linear()
       .domain(yDomain)
       .range([height - 2 * padding, 0]);
-
+    //在计算机图形学中，通常 y 轴是从上到下增长的，即画布的顶部是 y = 0，底部是 y 的最大值
     // Get a range of colors.
     let tmpScale = d3.scale.linear<string, number>()
         .domain([0, .5, 1])
@@ -116,22 +116,22 @@ export class HeatMap {
 
     if (this.settings.showAxes) {
       let xAxis = d3.svg.axis()
-        .scale(this.xScale)
-        .orient("bottom");
+        .scale(this.xScale)//x轴的缩放比例
+        .orient("bottom");//x轴放在底部
 
       let yAxis = d3.svg.axis()
-        .scale(this.yScale)
-        .orient("right");
+        .scale(this.yScale)//y轴的缩放比例
+        .orient("right");//y轴放在右边
 
       this.svg.append("g")
         .attr("class", "x axis")
         .attr("transform", `translate(0,${height - 2 * padding})`)
-        .call(xAxis);
+        .call(xAxis);// 从height ->0 y轴上，所以底部是heigt - 2*padding
 
       this.svg.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(" + (width - 2 * padding) + ",0)")
-        .call(yAxis);
+        .attr("transform", `translate(${width - 2 * padding},0)`)
+        .call(yAxis);// 从0->width x轴上，所以右部是width - 2 * padding
     }
   }
 
@@ -147,7 +147,7 @@ export class HeatMap {
       throw Error("Can't add points since noSvg=true");
     }
     this.updateCircles(this.svg.select("g.train"), points);
-  }
+  }//更新训练点 
 
   updateBackground(data: number[][], discretize: boolean): void {
     let dx = data[0].length;
@@ -157,7 +157,7 @@ export class HeatMap {
       throw new Error(
           "The provided data matrix must be of size " +
           "numSamples X numSamples");
-    }
+    }//如果data的行数和列数不等于numSamples，则抛出错误
 
     // Compute the pixel colors; scaled by CSS.
     let context = (this.canvas.node() as HTMLCanvasElement).getContext("2d");
