@@ -16,10 +16,10 @@ limitations under the License.
 import * as nn from "./nn";
 import * as dataset from "./dataset";
 
-/** Suffix added to the state when storing if a control is hidden or not. */
+/** 存储控件是否隐藏时添加的状态后缀 */
 const HIDE_STATE_SUFFIX = "_hide";
 
-/** A map between names and activation functions. */
+/** 名称和激活函数之间的映射 */
 export let activations: {[key: string]: nn.ActivationFunction} = {
   "relu": nn.Activations.RELU,
   "tanh": nn.Activations.TANH,
@@ -28,14 +28,14 @@ export let activations: {[key: string]: nn.ActivationFunction} = {
   "leakyRelu": nn.Activations.LEAKY_RELU
 };
 
-/** A map between names and regularization functions. */
+/** 名称和正则化函数之间的映射 */
 export let regularizations: {[key: string]: nn.RegularizationFunction} = {
   "none": null,
   "L1": nn.RegularizationFunction.L1,
   "L2": nn.RegularizationFunction.L2
 };
 
-/** A map between dataset names and functions that generate classification data. */
+/** 数据集名称和生成分类数据的函数之间的映射 */
 export let datasets: {[key: string]: dataset.DataGenerator} = {
   "circle": dataset.classifyCircleData,
   "xor": dataset.classifyXORData,
@@ -43,7 +43,7 @@ export let datasets: {[key: string]: dataset.DataGenerator} = {
   "spiral": dataset.classifySpiralData,
 };
 
-/** A map between dataset names and functions that generate regression data. */
+/** 数据集名称和生成回归数据的函数之间的映射 */
 export let regDatasets: {[key: string]: dataset.DataGenerator} = {
   "reg-plane": dataset.regressPlane,
   "reg-gauss": dataset.regressGaussian
@@ -73,8 +73,7 @@ function getHideProps(obj: any): string[] {
 }
 
 /**
- * The data type of a state variable. Used for determining the
- * (de)serialization method.
+ * 状态变量的数据类型。用于确定序列化和反序列化方法。
  */
 export enum Type {
   STRING,
@@ -101,7 +100,7 @@ export interface Property {
   keyMap?: {[key: string]: any};
 };
 
-// Add the GUI state.
+// 添加GUI状态
 export class State {
 
   private static PROPS: Property[] = [
@@ -166,7 +165,7 @@ export class State {
   seed: string;
 
   /**
-   * Deserializes the state from the url hash.
+   * 从URL哈希中反序列化状态
    */
   static deserializeState(): State {
     let map: {[key: string]: string} = {};
@@ -184,7 +183,7 @@ export class State {
       return value.trim() === "" ? [] : value.split(",");
     }
 
-    // Deserialize regular properties.
+    // 反序列化常规属性
     State.PROPS.forEach(({name, type, keyMap}) => {
       switch (type) {
         case Type.OBJECT:
@@ -198,7 +197,7 @@ export class State {
           break;
         case Type.NUMBER:
           if (hasKey(name)) {
-            // The + operator is for converting a string to a number.
+            // + 运算符用于将字符串转换为数字
             state[name] = +map[name];
           }
           break;
@@ -227,7 +226,7 @@ export class State {
       }
     });
 
-    // Deserialize state properties that correspond to hiding UI controls.
+    // 反序列化对应于隐藏UI控件的状态属性
     getHideProps(map).forEach(prop => {
       state[prop] = (map[prop] === "true") ? true : false;
     });
@@ -240,14 +239,14 @@ export class State {
   }
 
   /**
-   * Serializes the state into the url hash.
+   * 将状态序列化到URL哈希中
    */
   serialize() {
-    // Serialize regular properties.
+    // 序列化常规属性
     let props: string[] = [];
     State.PROPS.forEach(({name, type, keyMap}) => {
       let value = this[name];
-      // Don't serialize missing values.
+      // 不序列化缺失的值
       if (value == null) {
         return;
       }
@@ -259,14 +258,14 @@ export class State {
       }
       props.push(`${name}=${value}`);
     });
-    // Serialize properties that correspond to hiding UI controls.
+    // 序列化对应于隐藏UI控件的属性
     getHideProps(this).forEach(prop => {
       props.push(`${prop}=${this[prop]}`);
     });
     window.location.hash = props.join("&");
   }
 
-  /** Returns all the hidden properties. */
+  /** 返回所有隐藏的属性 */
   getHiddenProps(): string[] {
     let result: string[] = [];
     for (let prop in this) {

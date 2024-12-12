@@ -29,8 +29,10 @@ import {Example2D, shuffle} from "./dataset";
 import {AppendingLineChart} from "./linechart";
 import * as d3 from 'd3';
 import {Activations} from "./nn";
+import {BPVisualization} from "./bp-visualization";
 
 let mainWidth;
+let bpVis: BPVisualization;
 
 // More scrolling
 d3.select(".more button").on("click", function() {
@@ -184,7 +186,7 @@ function drawActivationFunction(type: string) {
   const width = canvas.width;
   const height = canvas.height;
   
-  // 清空画布
+  // ���空画布
   ctx.clearRect(0, 0, width, height);
   
   // 绘制坐标轴
@@ -429,6 +431,9 @@ function makeGUI() {
     d3.select("div.more").style("display", "none");
     d3.select("header").style("display", "none");
   }
+
+  // 初始化BP可视化
+  bpVis = new BPVisualization('bp-vis');
 }
 
 function updateBiasesUI(network: nn.Node[][]) {
@@ -944,15 +949,95 @@ function constructInput(x: number, y: number): number[] {
 
 function oneStep(): void {
   iter++;
+  
+  let layerValues: Array<{
+    layerId: number;
+    nodes: Array<{
+      id: string;
+      forward: number;
+      backward: number;
+    }>;
+  }> = [];
+
+  let firstBatchInput: number[] | null = null;
+  
   trainData.forEach((point, i) => {
     let input = constructInput(point.x, point.y);
+    
+    // 记录每个批次的第一个输入
+    if (i % state.batchSize === 0) {
+      firstBatchInput = input;
+      
+      // 初始化或更新输入层的值
+      if (!layerValues[0]) {
+        // 创建输入层，包含所有选中的特征作为节点名称
+        const inputNodes = [];
+        for (let inputName in INPUTS) {
+          if (state[inputName]) {
+            inputNodes.push({
+              id: inputName,
+              forward: 0,  // 不显示值
+              backward: 0
+            });
+          }
+        }
+        
+        layerValues[0] = {
+          layerId: 0,
+          nodes: inputNodes
+        };
+      }
+    }
+    
     nn.forwardProp(network, input);
+    
+    // 收集隐藏层和输出层的正向传播值
+    network.forEach((layer, layerIdx) => {
+      if (layerIdx === 0) return; // 跳过输入层
+      
+      if (!layerValues[layerIdx]) {
+        layerValues[layerIdx] = {
+          layerId: layerIdx,
+          nodes: layer.map(node => ({
+            id: node.id,
+            forward: node.output,
+            backward: 0
+          }))
+        };
+      } else {
+        layer.forEach((node, nodeIdx) => {
+          layerValues[layerIdx].nodes[nodeIdx].forward = node.output;
+        });
+      }
+    });
+    
     nn.backProp(network, point.label, nn.Errors.SQUARE);
+    
+    // 收集反向传播值
+    network.forEach((layer, layerIdx) => {
+      if (layerIdx === 0) return; // 跳过输入层
+      layer.forEach((node, nodeIdx) => {
+        if (layerValues[layerIdx]) {
+          layerValues[layerIdx].nodes[nodeIdx].backward = node.inputDer;
+        }
+      });
+    });
+
     if ((i + 1) % state.batchSize === 0) {
+      // 更新BP可视化
+      if (bpVis) {
+        bpVis.updateData(layerValues);
+      }
+      
       nn.updateWeights(network, state.learningRate, state.regularizationRate);
+      
+      // 重置收集的值
+      layerValues = [];
+      firstBatchInput = null;
     }
   });
-  // Compute the loss.
+  
+  // 计算损失
   lossTrain = getLoss(network, trainData);
   lossTest = getLoss(network, testData);
   updateUI();
@@ -998,6 +1083,10 @@ function reset(onStartup=false) {
   drawNetwork(network);
   updateUI(true);
   drawActivationFunction(getKeyFromValue(activations, state.activation));
+
+  if (bpVis) {
+    bpVis.clear();
+  }
 }
 
 function initTutorial() {

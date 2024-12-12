@@ -77,7 +77,7 @@ limitations under the License.
   <!-- Header -->
   <header>
     <h1 class="l--page">
-      可视化神经网络-<b>Neural Network</b>
+      简单神经网络过程可视化
       <br>
     </h1>
   </header>
@@ -178,152 +178,163 @@ limitations under the License.
 
   <!-- Main Part -->
   <div id="main-part" class="l--page">
+    <!-- 神经网络可视��部分 -->
+    <div class="network-vis">
+      <div class="network-container">
+        <!-- 数据列 -->
+        <div class="column data">
+          <h4>
+            <span>数据</span>
+          </h4>
+          <div class="ui-dataset">
+            <p>选择要使用的数据集：</p>
+            <div class="dataset-list">
+              <div class="dataset" title="圆形">
+                <canvas class="data-thumbnail" data-dataset="circle"></canvas>
+              </div>
+              <div class="dataset" title="异或">
+                <canvas class="data-thumbnail" data-dataset="xor"></canvas>
+              </div>
+              <div class="dataset" title="高斯">
+                <canvas class="data-thumbnail" data-dataset="gauss"></canvas>
+              </div>
+              <div class="dataset" title="螺旋">
+                <canvas class="data-thumbnail" data-dataset="spiral"></canvas>
+              </div>
+              <div class="dataset" title="平面">
+                <canvas class="data-thumbnail" data-regDataset="reg-plane"></canvas>
+              </div>
+              <div class="dataset" title="多高斯">
+                <canvas class="data-thumbnail" data-regDataset="reg-gauss"></canvas>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="ui-percTrainData">
+              <label for="percTrainData">训练集与测试集比：&nbsp;&nbsp;<span class="value">XX</span>%</label>
+              <p class="slider">
+                <input class="mdl-slider mdl-js-slider" type="range" id="percTrainData" min="10" max="90" step="10">
+              </p>
+            </div>
+            <div class="ui-noise">
+              <label for="noise">噪声：&nbsp;&nbsp;<span class="value">XX</span></label>
+              <p class="slider">
+                <input class="mdl-slider mdl-js-slider" type="range" id="noise" min="0" max="50" step="5">
+              </p>
+            </div>
+            <div class="ui-batchSize">
+              <label for="batchSize">批量大小：&nbsp;&nbsp;<span class="value">XX</span></label>
+              <p class="slider">
+                <input class="mdl-slider mdl-js-slider" type="range" id="batchSize" min="1" max="30" step="1">
+              </p>
+            </div>
+            <button class="basic-button" id="data-regen-button" title="重新生成数据">
+              重新生成
+            </button>
+          </div>
+        </div>
 
-    <!--  Data Column-->
-    <div class="column data">
+        <!-- 特征列 -->
+        <div class="column features">
+          <h4>特征</h4>
+          <p>选择要输入的特征：</p>
+          <div id="network">
+            <svg id="svg" width="510" height="450">
+              <defs>
+                <marker id="markerArrow" markerWidth="7" markerHeight="13" refX="1" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+                  <path d="M2,11 L7,6 L2,2" />
+                </marker>
+              </defs>
+            </svg>
+            <!-- Hover card -->
+            <div id="hovercard">
+              <div style="font-size:10px">点击任意位置进行编辑</div>
+              <div><span class="type">/偏置</span>值为<span class="value">0.2</span><span><input type="number"/></span></div>
+            </div>
+            <div class="callout thumbnail">
+              <svg viewBox="0 0 30 30">
+                <defs>
+                  <marker id="arrow" markerWidth="5" markerHeight="5" refx="5" refy="2.5" orient="auto" markerUnits="userSpaceOnUse">
+                    <path d="M0,0 L5,2.5 L0,5 z"/>
+                  </marker>
+                </defs>
+                <path d="M12,30C5,20 2,15 12,0" marker-end="url(#arrow)">
+              </svg>
+              <div class="label">
+                这是一个<b>神经元</b>的输出。悬停以查看更大视图。
+              </div>
+            </div>
+            <div class="callout weights">
+              <svg viewBox="0 0 30 30">
+                <defs>
+                  <marker id="arrow" markerWidth="5" markerHeight="5" refx="5" refy="2.5" orient="auto" markerUnits="userSpaceOnUse">
+                    <path d="M0,0 L5,2.5 L0,5 z"/>
+                  </marker>
+                </defs>
+                <path d="M12,30C5,20 2,15 12,0" marker-end="url(#arrow)">
+              </svg>
+              <div class="label">
+                输出通过不同的<b>权重</b>进行混合，线条的粗细表示权重大小。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 隐藏层列 -->
+        <div class="column hidden-layers">
+          <h4>
+            <div class="ui-numHiddenLayers">
+              <button id="add-layers" class="mdl-button mdl-js-button mdl-button--icon" title="添加隐藏层">
+                <i class="material-icons">add</i>
+              </button>
+              <button id="remove-layers" class="mdl-button mdl-js-button mdl-button--icon" title="删除隐藏层">
+                <i class="material-icons">remove</i>
+              </button>
+            </div>
+            <span id="num-layers"></span>
+            <span id="layers-label">隐藏层</span>
+          </h4>
+          <div class="bracket"></div>
+        </div>
+
+        <!-- 输出列 -->
+        <div class="column output">
+          <h4>输出</h4>
+          <div class="metrics">
+            <div class="output-stats ui-percTrainData">
+              <span>测试损失</span>
+              <div class="value" id="loss-test"></div>
+            </div>
+            <div class="output-stats train">
+              <span>训练损失</span>
+              <div class="value" id="loss-train"></div>
+            </div>
+            <div id="linechart"></div>
+          </div>
+          <div id="heatmap"></div>
+          <div style="float:left;margin-top:20px">
+            <div class="checkbox-container">
+              <label class="ui-showTestData mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="show-test-data">
+                <input type="checkbox" id="show-test-data" class="mdl-checkbox__input" checked>
+                <span class="mdl-checkbox__label label">显示测试数据</span>
+              </label>
+              <label class="ui-discretize mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="discretize">
+                <input type="checkbox" id="discretize" class="mdl-checkbox__input" checked>
+                <span class="mdl-checkbox__label label">离散化输出</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BP可视化部分 -->
+    <div class="bp-vis-section">
       <h4>
-        <span>数据</span>
+        <span>反向传播过程</span>
       </h4>
-      <div class="ui-dataset">
-        <p>选择要使用的数据集：</p>
-        <div class="dataset-list">
-          <div class="dataset" title="圆形">
-            <canvas class="data-thumbnail" data-dataset="circle"></canvas>
-          </div>
-          <div class="dataset" title="异或">
-            <canvas class="data-thumbnail" data-dataset="xor"></canvas>
-          </div>
-          <div class="dataset" title="高斯">
-            <canvas class="data-thumbnail" data-dataset="gauss"></canvas>
-          </div>
-          <div class="dataset" title="螺旋">
-            <canvas class="data-thumbnail" data-dataset="spiral"></canvas>
-          </div>
-          <div class="dataset" title="平面">
-            <canvas class="data-thumbnail" data-regDataset="reg-plane"></canvas>
-          </div>
-          <div class="dataset" title="多高斯">
-            <canvas class="data-thumbnail" data-regDataset="reg-gauss"></canvas>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="ui-percTrainData">
-          <label for="percTrainData">训练集与测试集比例：&nbsp;&nbsp;<span class="value">XX</span>%</label>
-          <p class="slider">
-            <input class="mdl-slider mdl-js-slider" type="range" id="percTrainData" min="10" max="90" step="10">
-          </p>
-        </div>
-        <div class="ui-noise">
-          <label for="noise">噪声：&nbsp;&nbsp;<span class="value">XX</span></label>
-          <p class="slider">
-            <input class="mdl-slider mdl-js-slider" type="range" id="noise" min="0" max="50" step="5">
-          </p>
-        </div>
-        <div class="ui-batchSize">
-          <label for="batchSize">批量大小：&nbsp;&nbsp;<span class="value">XX</span></label>
-          <p class="slider">
-            <input class="mdl-slider mdl-js-slider" type="range" id="batchSize" min="1" max="30" step="1">
-          </p>
-        </div>
-        <button class="basic-button" id="data-regen-button" title="重新生成数据">
-          重新生成
-        </button>
-      </div>
+      <div id="bp-vis"></div>
     </div>
-
-    <!-- Features Column -->
-    <div class="column features">
-      <h4>特征</h4>
-      <p>选择要输入的特征：</p>
-      <div id="network">
-        <svg id="svg" width="510" height="450">
-          <defs>
-            <marker id="markerArrow" markerWidth="7" markerHeight="13" refX="1" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-              <path d="M2,11 L7,6 L2,2" />
-            </marker>
-          </defs>
-        </svg>
-        <!-- Hover card -->
-        <div id="hovercard">
-          <div style="font-size:10px">点击任意位置进行编辑</div>
-          <div><span class="type">/偏置</span>值为<span class="value">0.2</span><span><input type="number"/></span></div>
-        </div>
-        <div class="callout thumbnail">
-          <svg viewBox="0 0 30 30">
-            <defs>
-              <marker id="arrow" markerWidth="5" markerHeight="5" refx="5" refy="2.5" orient="auto" markerUnits="userSpaceOnUse">
-                <path d="M0,0 L5,2.5 L0,5 z"/>
-              </marker>
-            </defs>
-            <path d="M12,30C5,20 2,15 12,0" marker-end="url(#arrow)">
-          </svg>
-          <div class="label">
-            这是一个<b>神经元</b>的输出。悬停可以查看更大视图。
-          </div>
-        </div>
-        <div class="callout weights">
-          <svg viewBox="0 0 30 30">
-            <defs>
-              <marker id="arrow" markerWidth="5" markerHeight="5" refx="5" refy="2.5" orient="auto" markerUnits="userSpaceOnUse">
-                <path d="M0,0 L5,2.5 L0,5 z"/>
-              </marker>
-            </defs>
-            <path d="M12,30C5,20 2,15 12,0" marker-end="url(#arrow)">
-          </svg>
-          <div class="label">
-            输出通过不同的<b>权重</b>进行混合，线条的粗细表示权重大小。
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Hidden Layers Column -->
-    <div class="column hidden-layers">
-      <h4>
-        <div class="ui-numHiddenLayers">
-          <button id="add-layers" class="mdl-button mdl-js-button mdl-button--icon" title="添加隐藏层">
-            <i class="material-icons">add</i>
-          </button>
-          <button id="remove-layers" class="mdl-button mdl-js-button mdl-button--icon" title="删除隐藏层">
-            <i class="material-icons">remove</i>
-          </button>
-        </div>
-        <span id="num-layers"></span>
-        <span id="layers-label">隐藏层</span>
-      </h4>
-      <div class="bracket"></div>
-    </div>
-
-    <!-- Output Column -->
-    <div class="column output">
-      <h4>输出</h4>
-      <div class="metrics">
-        <div class="output-stats ui-percTrainData">
-          <span>测试损失</span>
-          <div class="value" id="loss-test"></div>
-        </div>
-        <div class="output-stats train">
-          <span>训练损失</span>
-          <div class="value" id="loss-train"></div>
-        </div>
-        <div id="linechart"></div>
-      </div>
-      <div id="heatmap"></div>
-      <div style="float:left;margin-top:20px">
-        <div class="checkbox-container">
-          <label class="ui-showTestData mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="show-test-data">
-            <input type="checkbox" id="show-test-data" class="mdl-checkbox__input" checked>
-            <span class="mdl-checkbox__label label">显示测试数据</span>
-          </label>
-          <label class="ui-discretize mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="discretize">
-            <input type="checkbox" id="discretize" class="mdl-checkbox__input" checked>
-            <span class="mdl-checkbox__label label">离散化输出</span>
-          </label>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- Footer -->
